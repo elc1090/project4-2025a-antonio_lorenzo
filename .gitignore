@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv environment variables
+.env
+
+# database (caso use SQLite local ou arquivos de dump)
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+
+# VSCode settings (opcional)
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Coverage reports
+coverage/
+
+# Build output (se tiver)
+dist/
+build/
