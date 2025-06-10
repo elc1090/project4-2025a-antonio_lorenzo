@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 require('dotenv').config();
-
+const authenticateToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Registro
@@ -50,5 +50,26 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Erro no servidor' });
   }
 });
+
+router.get('/profile', authenticateToken, async (req, res) => {
+    try {
+        // req.user.userId vem do token decodificado
+        const user = await User.findByPk(req.user.userId, { attributes: ['id', 'name', 'email'] });
+        if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro no servidor' });
+    }
+});
+
+router.get('/', async (req, res) => {
+    try {
+        const users = await User.findAll({ attributes: ['id', 'name', 'email'] });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: 'Erro no servidor' });
+    }
+});
+
 
 module.exports = router;

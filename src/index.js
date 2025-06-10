@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/dataBase');
 const authRoutes = require('./routes/authroutes');
+const tripRoutes = require('./routes/TripRoutes');
 
 dotenv.config();
 
@@ -11,7 +12,9 @@ const app = express();
 app.use(cors());            
 app.use(express.json());    
 
-app.use('/auth', authRoutes);  
+app.use('/auth', authRoutes);
+
+app.use('/trips', tripRoutes);
 
 // rota de teste
 app.get('/', (req, res) => {
@@ -23,7 +26,7 @@ const PORT = process.env.PORT || 3000;
 sequelize.authenticate()
   .then(() => {
     console.log('Conexão com o banco de dados estabelecida com sucesso!');
-    return sequelize.sync();
+    return sequelize.sync(); // Sincroniza os modelos com o banco de dados
   })
   .then(() => {
     app.listen(PORT, () => {
