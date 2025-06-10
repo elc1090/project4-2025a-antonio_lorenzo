@@ -3,7 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./config/dataBase');
 const authRoutes = require('./routes/authroutes');
-const tripRoutes = require('./routes/tripRoutes');
+const tripRoutes = require('./routes/triproutes');
 
 dotenv.config();
 
