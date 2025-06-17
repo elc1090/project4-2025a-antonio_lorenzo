@@ -4,13 +4,27 @@ const dotenv = require('dotenv');
 const sequelize = require('./config/dataBase');
 const authRoutes = require('./routes/authroutes');
 const tripRoutes = require('./routes/triproutes');
+const passport = require('passport');
+require('./config/passport');
+const expressSession = require('express-session');
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors());            
-app.use(express.json());    
+app.use(expressSession({
+  secret: '***REMOVED***',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
+app.use(cors());
+app.use(express.json());
 
 app.use('/auth', authRoutes);
 

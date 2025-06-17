@@ -5,6 +5,24 @@ const User = require('../models/User');
 require('dotenv').config();
 const authenticateToken = require('../middleware/authMiddleware');
 const router = express.Router();
+const passport = require('passport');
+require('../config/passport');
+const authController = require('../controllers/authControllers');
+
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', passport.authenticate('google', {
+  failureRedirect: '/',
+}), (req, res) => {
+  res.redirect('/auth/success');
+});
+
+
+router.get('/success', authController.loginSuccess);
+router.get('/logout', authController.logout);
+
+
 
 // Registro
 router.post('/register', async (req, res) => {
@@ -35,19 +53,19 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { email }});
     if (!user) {
-      return res.status(400).json({ message: 'Email ou senha inválidos' });
+      return res.status(400).json({ message: 'Email inválido' });
     }
 
     const match = await bcrypt.compare(password, user.passwordHash);
     if (!match) {
-      return res.status(400).json({ message: 'Email ou senha inválidos' });
+      return res.status(400).json({ message: 'Senha inválida' });
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
-  } catch (error) {
-    res.status(500).json({ message: 'Erro no servidor' });
+  } catch (err) {
+    res.status(500).json({ message: 'Erro no servidor' , error: err.message });
   }
 });
 

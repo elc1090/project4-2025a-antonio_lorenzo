@@ -2,6 +2,11 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/dataBase');
 
 const User = sequelize.define('User', {
+  googleId: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    unique: true
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -13,7 +18,7 @@ const User = sequelize.define('User', {
   },
   passwordHash: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true // Agora pode ser nulo para usuários do Google
   }
 }, {
   tableName: 'users',
@@ -21,4 +26,3 @@ const User = sequelize.define('User', {
 });
 
 module.exports = User;
-

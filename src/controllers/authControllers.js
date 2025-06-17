@@ -1,6 +1,20 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// importar User do Sequelize
+
+
+exports.loginSuccess = (req, res) => {
+  if (!req.user) return res.redirect('/');
+  res.status(200).json({ success: true, message: "Login bem-sucedido", user: req.user });
+};
+
+
+exports.logout = (req, res) => {
+  req.logout(() => {
+    res.redirect('/');
+  });
+};
+
+
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
