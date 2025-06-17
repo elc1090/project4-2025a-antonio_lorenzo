@@ -13,7 +13,7 @@ dotenv.config();
 const app = express();
 
 app.use(expressSession({
-  secret: '***REMOVED***',
+  secret: process.env.GOOGLE_CLIENT_SECRET,
   resave: false,
   saveUninitialized: false
 }));
