@@ -16,9 +16,9 @@ passport.deserializeUser(async (id, done) => {
 });
 
 passport.use(new GoogleStrategy({
-  clientID: '***REMOVED***',
-  clientSecret: '***REMOVED***',
-  callbackURL: 'http://localhost:3000/auth/google/callback',
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK_URL,
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     // Verifica se já existe um usuário com esse Google ID
