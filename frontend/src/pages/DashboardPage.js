@@ -44,7 +44,7 @@ function DashboardPage() {
     <div>
       <h1>Minhas Viagens</h1>
       {user && <p>Olá, {user.name}!</p>}
-      <button onClick={handleLogout} style={{ marginBottom: '20px' }}>Sair</button>
+      <button onClick={handleLogout} style={{ marginRight: '10px', marginBottom: '20px' }}>Sair</button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
       
