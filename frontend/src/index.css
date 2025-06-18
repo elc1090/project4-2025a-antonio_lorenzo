@@ -5,15 +5,15 @@
 
 /* Define variáveis de cor para fácil manutenção */
 :root {
-  --primary-color: #007bff;
+  --primary-color: hsl(211, 100%, 50%);
   --secondary-color: #6c757d;
   --success-color: #28a745;
   --danger-color: #dc3545;
   --light-color: #f4f7f6;
   --dark-color: #343a40;
   --text-color: #333;
-  --background-color: #f4f7f6;
-  --container-bg-color: #ffffff;
+  --background-color: #7ab6e1;
+  --container-bg-color: hsl(193, 100%, 50%);
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 

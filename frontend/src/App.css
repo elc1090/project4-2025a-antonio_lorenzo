@@ -41,7 +41,7 @@
 
 /* --- Layout Principal --- */
 .container {
-  max-width: 1100px;
+  max-width: 90%; /* Alteramos de 1100px para 90% da largura da tela */
   margin: 2rem auto;
   padding: 0 2rem;
 }
@@ -168,4 +168,111 @@ button.btn-danger {
   border-radius: 4px;
   text-align: center;
   margin-bottom: 1rem;
+}
+
+
+
+/* --- Estilos da Nova Página Inicial --- */
+
+.homepage {
+  /* Remove o padding padrão do .container para a homepage */
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: -2rem 0 0 0; /* Ajuste para preencher o espaço do container */
+}
+
+/* COMO VAI FICAR (COM EFEITO PARALLAX) */
+.hero-section {
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  
+  /* Efeito da imagem de fundo */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* <-- ADICIONE ESTA LINHA */
+}
+.hero-section {
+  background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Efeito Parallax */
+}
+
+.hero-content {
+  max-width: 800px;
+  padding: 2rem;
+  background: rgba(0,0,0,0.2); /* Fundo sutil para legibilidade */
+  border-radius: 10px;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 300;
+  margin-bottom: 2rem;
+}
+
+.hero-button {
+  background: var(--primary-color);
+  color: white;
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+}
+
+.hero-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+}
+
+/* Seção de Funcionalidades */
+.features-section {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: #fff;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  color: var(--dark-color);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
 }

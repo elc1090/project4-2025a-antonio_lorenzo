@@ -34,7 +34,7 @@ function LoginForm() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/google';
+    window.location.href = 'https://project4-2025a-antonio-lorenzo.onrender.com/auth/google';
   };
 
   return (
@@ -51,7 +51,7 @@ function LoginForm() {
         <button type="submit">Entrar</button>
       </form>
       <hr />
-      <p>Ou</p>
+
       <button onClick={handleGoogleLogin}>
         Login com Google
       </button>
