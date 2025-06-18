@@ -1,31 +1,39 @@
+// src/pages/AuthCallbackPage.js
+
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getProfile } from '../services/api';
 
 function AuthCallbackPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
-    // Extrai o token dos parâmetros da URL
-    const params = new URLSearchParams(location.search);
-    const token = params.get('token');
+    const handleAuth = async () => {
+      const params = new URLSearchParams(location.search);
+      const token = params.get('token');
 
-    if (token) {
-      // Salva o token no localStorage
-      localStorage.setItem('token', token);
-      // Redireciona para o dashboard
-      navigate('/dashboard');
-    } else {
-      // Se não houver token, redireciona para a página de login com uma mensagem de erro
-      navigate('/login?error=auth_failed');
-    }
-  }, [location, navigate]);
+      if (token) {
+        localStorage.setItem('token', token);
+        try {
+            // Atualiza o contexto com os dados do usuário
+            const profileRes = await getProfile();
+            login(profileRes.data);
+            navigate('/dashboard');
+        } catch {
+            navigate('/login?error=profile_failed');
+        }
+      } else {
+        navigate('/login?error=auth_failed');
+      }
+    };
 
-  return (
-    <div>
-      <p>Autenticando...</p>
-    </div>
-  );
+    handleAuth();
+  }, [location, navigate, login]);
+
+  return <div>Autenticando...</div>;
 }
 
 export default AuthCallbackPage;

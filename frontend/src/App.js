@@ -1,55 +1,55 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+
+import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import AuthCallbackPage from './pages/AuthCallbackPage'; 
-import './App.css'; 
+import DashboardPage from './pages/DashboardPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
-// Componente simples para a página inicial
-function HomePage() {
-  return (
-      <div>
-          <h2>Bem-vindo ao Trip Planner</h2>
-          <p>Organize suas viagens de forma simples e eficiente.</p>
-          <p>Faça seu <Link to="/login">login</Link> ou <Link to="/register">crie uma conta</Link>.</p>
-      </div>
-  );
-}
+import './App.css';
 
-// Página "Dashboard" para onde o usuário irá após o login
-function DashboardPage() {
-    const navigate = useNavigate();
-
-    const handleLogout = () => {
-        localStorage.removeItem('token'); // Remove o token
-        navigate('/'); // Volta para a home
-    };
-
-    return (
-        <div>
-            <h1>Minhas Viagens</h1>
-            <p>Em breve, a lista de suas viagens aparecerá aqui!</p>
-            <button onClick={handleLogout}>Sair</button>
-        </div>
-    );
-}
-
-// Componente principal da aplicação com as rotas
 function App() {
+  const { user, logout } = useAuth();
+
   return (
     <Router>
-      <nav>
-        <Link to="/">Home</Link> | <Link to="/login">Login</Link> | <Link to="/register">Registrar</Link>
+      <nav style={{ padding: '1rem', background: '#f0f0f0' }}>
+        <NavLink to="/" style={{ marginRight: '1rem' }}>Home</NavLink>
+        {user ? (
+          <>
+            <NavLink to="/dashboard" style={{ marginRight: '1rem' }}>Minhas Viagens</NavLink>
+            <a href="/" onClick={(e) => { e.preventDefault(); logout(); }} style={{ cursor: 'pointer' }}>
+              Sair
+            </a>
+          </>
+        ) : (
+          <>
+            <NavLink to="/login" style={{ marginRight: '1rem' }}>Login</NavLink>
+            <NavLink to="/register">Registrar</NavLink>
+          </>
+        )}
       </nav>
       <hr />
-      <div className="container">
+      <div className="container" style={{ padding: '1rem' }}>
         <Routes>
+          {/* Rotas Públicas */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          {/* Nova rota para o callback da autenticação */}
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+          {/* Rotas Protegidas */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>

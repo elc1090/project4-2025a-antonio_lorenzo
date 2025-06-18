@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // O backend está rodando na porta 3000.
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://project4-2025a-antonio-lorenzo.onrender.com',
 });
 
 // requisição que o frontend fizer para o backend.

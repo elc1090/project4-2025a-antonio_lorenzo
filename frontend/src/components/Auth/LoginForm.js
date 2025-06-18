@@ -1,32 +1,39 @@
+// src/components/Auth/LoginForm.js
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../services/api';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { loginUser, getProfile } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
+
+  // Redireciona para a página que o usuário tentou acessar ou para o dashboard
+  const from = location.state?.from?.pathname || '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      // A rota de login espera 'email' e 'password'.
       const { data } = await loginUser({ email, password });
-            
-      // Salva o token recebido no localStorage para ser usado em futuras requisições.
       localStorage.setItem('token', data.token);
+      
+      // Busca os dados do usuário e atualiza o contexto
+      const profileRes = await getProfile();
+      login(profileRes.data);
 
-      navigate('/dashboard'); // Redireciona para o painel principal do usuário.
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Ocorreu um erro ao fazer login.');
     }
   };
 
-  // Função para lidar com o login do Google
   const handleGoogleLogin = () => {
-    // Redireciona o usuário para a rota de autenticação do Google no backend
     window.location.href = 'http://localhost:3000/auth/google';
   };
 
@@ -45,7 +52,6 @@ function LoginForm() {
       </form>
       <hr />
       <p>Ou</p>
-      {/* Novo botão de login com o Google */}
       <button onClick={handleGoogleLogin}>
         Login com Google
       </button>
