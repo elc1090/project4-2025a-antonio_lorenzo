@@ -14,7 +14,7 @@ function LoginForm() {
     try {
       // A rota de login espera 'email' e 'password'.
       const { data } = await loginUser({ email, password });
-      
+            
       // Salva o token recebido no localStorage para ser usado em futuras requisições.
       localStorage.setItem('token', data.token);
 
@@ -24,18 +24,32 @@ function LoginForm() {
     }
   };
 
+  // Função para lidar com o login do Google
+  const handleGoogleLogin = () => {
+    // Redireciona o usuário para a rota de autenticação do Google no backend
+    window.location.href = 'http://localhost:3000/auth/google';
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <div>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" required />
-      </div>
-      <div>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" required />
-      </div>
-      <button type="submit">Entrar</button>
-    </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <div>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" required />
+        </div>
+        <div>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" required />
+        </div>
+        <button type="submit">Entrar</button>
+      </form>
+      <hr />
+      <p>Ou</p>
+      {/* Novo botão de login com o Google */}
+      <button onClick={handleGoogleLogin}>
+        Login com Google
+      </button>
+    </div>
   );
 }
 

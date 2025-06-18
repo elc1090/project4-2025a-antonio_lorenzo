@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import AuthCallbackPage from './pages/AuthCallbackPage'; 
 import './App.css'; 
 
 // Componente simples para a página inicial
@@ -47,6 +48,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          {/* Nova rota para o callback da autenticação */}
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
         </Routes>
       </div>
     </Router>
