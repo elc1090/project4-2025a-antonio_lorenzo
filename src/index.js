@@ -10,9 +10,23 @@ const expressSession = require('express-session');
 const placesRoutes = require('./routes/places');
 const rateLimit = require('express-rate-limit'); // Adicione esta linha
 
+const app = express();
+
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization',
+  credentials: true
+};
+app.use(cors(corsOptions));
+
+
+app.use(express.json());
+
 dotenv.config();
 
-const app = express();
+
 
 // Configuração de rate limiting para a API do Google Places
 const placesLimiter = rateLimit({
@@ -33,8 +47,7 @@ app.use(passport.session());
 // Aplica o rate limiting apenas nas rotas de places
 app.use('/places', placesLimiter, placesRoutes);
 
-app.use(cors());
-app.use(express.json());
+
 
 app.use('/auth', authRoutes);
 app.use('/trips', tripRoutes);
