@@ -26,18 +26,26 @@ async function generateGeminiContent(prompt, isJson = true) {
     let text = response.text();
     
     if (isJson) {
-      // Remove marcações de código se existirem
-      text = text.replace(/```json|```/g, '').trim();
+      // Remove all markdown code blocks
+      text = text.replace(/```(json)?/g, '').trim();
       
-      // Garante que é um JSON válido
-      if (!text.startsWith('{') && !text.startsWith('[')) {
-        text = text.substring(text.indexOf('{'));
-      }
-      if (!text.endsWith('}') && !text.endsWith(']')) {
-        text = text.substring(0, text.lastIndexOf('}') + 1);
+      // Find the first { or [ and the last } or ]
+      const jsonStart = Math.max(0, Math.min(
+        text.indexOf('{'),
+        text.indexOf('[') > -1 ? text.indexOf('[') : Infinity
+      ));
+      
+      const jsonEnd = Math.max(
+        text.lastIndexOf('}'),
+        text.lastIndexOf(']')
+      ) + 1;
+      
+      if (jsonStart < 0 || jsonEnd <= 0) {
+        throw new Error('No JSON found in response');
       }
       
-      return JSON.parse(text);
+      const jsonString = text.slice(jsonStart, jsonEnd);
+      return JSON.parse(jsonString);
     }
     return text;
   } catch (err) {
@@ -180,9 +188,22 @@ router.get('/itinerary', async (req, res) => {
     - ordem de visitação
     - tempo em cada local
     - dicas específicas
-    - como chegar ao próximo local`;
+    - como chegar ao próximo local
+    
+    IMPORTANTE: Retorne APENAS o JSON válido, sem nenhum texto adicional ou comentários.`;
 
-    const itinerary = await generateGeminiContent(prompt);
+    let itinerary;
+    try {
+      itinerary = await generateGeminiContent(prompt);
+    } catch (parseError) {
+      console.error('Failed to parse JSON response:', parseError);
+      // Try to manually clean the response
+      const rawResponse = await generateGeminiContent(prompt, false);
+      const jsonStart = rawResponse.indexOf('{');
+      const jsonEnd = rawResponse.lastIndexOf('}') + 1;
+      const jsonString = rawResponse.slice(jsonStart, jsonEnd);
+      itinerary = JSON.parse(jsonString);
+    }
     
     // Armazenar no cache
     placeCache.set(cacheKey, itinerary);
@@ -190,15 +211,16 @@ router.get('/itinerary', async (req, res) => {
     res.json(itinerary);
 
   } catch (err) {
-    const placesList = places.split(',');
+    console.error('Full itinerary error:', err);
+    const placesList = places?.split(',') || [];
     res.status(500).json({
       message: 'Erro ao gerar roteiro',
       error: err.message,
       fallback: {
         itinerary: placesList.map((place, i) => ({
-          place,
+          place: place || "Local desconhecido",
           order: i + 1,
-          duration: `${Math.floor(timeAvailable/placesList.length)} horas`,
+          duration: `${timeAvailable ? Math.floor(timeAvailable/placesList.length) : 2} horas`,
           tips: "Visite durante o dia",
           transport: "Táxi ou transporte público"
         })),
