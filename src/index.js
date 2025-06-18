@@ -7,10 +7,19 @@ const tripRoutes = require('./routes/triproutes');
 const passport = require('passport');
 require('./config/passport');
 const expressSession = require('express-session');
+const placesRoutes = require('./routes/places');
+const rateLimit = require('express-rate-limit'); // Adicione esta linha
 
 dotenv.config();
 
 const app = express();
+
+// Configuração de rate limiting para a API do Google Places
+const placesLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // limite de 100 requisições por IP a cada 15 minutos
+  message: 'Muitas requisições para o serviço de lugares, tente novamente mais tarde'
+});
 
 app.use(expressSession({
   secret: process.env.GOOGLE_CLIENT_SECRET,
@@ -21,18 +30,29 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
+// Aplica o rate limiting apenas nas rotas de places
+app.use('/places', placesLimiter, placesRoutes);
 
 app.use(cors());
 app.use(express.json());
 
 app.use('/auth', authRoutes);
-
 app.use('/trips', tripRoutes);
 
-// rota de teste
+// Rota de teste
 app.get('/', (req, res) => {
   res.send('API TripPlanner rodando!');
+});
+
+// Middleware de erro para capturar erros da API do Google
+app.use((err, req, res, next) => {
+  if (err.message.includes('Google API')) {
+    return res.status(500).json({ 
+      message: 'Erro no serviço de lugares',
+      error: err.message
+    });
+  }
+  next(err);
 });
 
 const PORT = process.env.PORT || 3000;
@@ -40,7 +60,7 @@ const PORT = process.env.PORT || 3000;
 sequelize.authenticate()
   .then(() => {
     console.log('Conexão com o banco de dados estabelecida com sucesso!');
-    return sequelize.sync(); // Sincroniza os modelos com o banco de dados
+    return sequelize.sync();
   })
   .then(() => {
     app.listen(PORT, () => {
