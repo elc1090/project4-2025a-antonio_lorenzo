@@ -27,7 +27,7 @@ router.get('/google/callback',
     const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     // Redirecionamento para o frontend com o token
-    res.redirect(`https://elc1090.github.io/project4-2025a-antonio_lorenzo/auth/success?token=${token}&userId=${req.user.id}`);
+    res.redirect(`https://elc1090.github.io/project4-2025a-antonio_lorenzo/auth/callback?token=${token}`);
   }
 );
 
