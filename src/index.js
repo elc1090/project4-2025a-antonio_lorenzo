@@ -8,35 +8,57 @@ const passport = require('passport');
 require('./config/passport');
 const expressSession = require('express-session');
 const placesRoutes = require('./routes/places');
-const rateLimit = require('express-rate-limit'); // Adicione esta linha
-
-const app = express();
-
-
-const allowedOrigins = [
-  'https://elc1090.github.io/project4-2025a-antonio_lorenzo'
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
-app.use(cors(corsOptions));
-
-app.use(express.json());
+const rateLimit = require('express-rate-limit');
+const pgSession = require('connect-pg-simple')(expressSession);
 
 dotenv.config();
 
-app.set('trust proxy', true);
+const app = express();
 
-// Configuração de rate limiting para a API do Google Places
+app.set('trust proxy', 1);
+
+
+const allowedOrigins = [
+  'https://elc1090.github.io'
+];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+
+app.use(expressSession({
+  store: new pgSession({
+    conString: process.env.DATABASE_URL,
+    createTableIfMissing: true
+  }),
+  secret: process.env.SESSION_SECRET || process.env.GOOGLE_CLIENT_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
+
+
+app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 const placesLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -44,49 +66,28 @@ const placesLimiter = rateLimit({
   skip: (req) => req.method === 'OPTIONS'
 });
 
-const pgSession = require('connect-pg-simple')(expressSession);
-
-app.use(expressSession({
-  store: new pgSession({
-    conString: process.env.DATABASE_URL, // sua conexão PostgreSQL
-    createTableIfMissing: true            // cria a tabela de sessão automaticamente
-  }),
-  secret: process.env.SESSION_SECRET || process.env.GOOGLE_CLIENT_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'lax',
-    maxAge: 24 * 60 * 60 * 1000 // 1 dia
-  }
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Aplica o rate limiting apenas nas rotas de places
 app.use('/places', placesLimiter, placesRoutes);
-
 
 
 app.use('/auth', authRoutes);
 app.use('/trips', tripRoutes);
 
-// Rota de teste
+
 app.get('/', (req, res) => {
   res.send('API TripPlanner rodando!');
 });
 
-// Middleware de erro para capturar erros da API do Google
+
 app.use((err, req, res, next) => {
-  if (err.message.includes('Google API')) {
-    return res.status(500).json({ 
+  if (err.message && err.message.includes('Google API')) {
+    return res.status(500).json({
       message: 'Erro no serviço de lugares',
       error: err.message
     });
   }
   next(err);
 });
+
 
 const PORT = process.env.PORT || 3000;
 
