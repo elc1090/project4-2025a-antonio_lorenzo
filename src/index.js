@@ -13,10 +13,20 @@ const rateLimit = require('express-rate-limit'); // Adicione esta linha
 const app = express();
 
 
+const allowedOrigins = [
+  'http://localhost:3000'
+];
+
 const corsOptions = {
-  origin: 'http://localhost:3000',
-  methods: 'GET,POST,PUT,DELETE',
-  allowedHeaders: 'Content-Type,Authorization',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
 app.use(cors(corsOptions));
@@ -30,15 +40,21 @@ app.set('trust proxy', true);
 
 // Configuração de rate limiting para a API do Google Places
 const placesLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // limite de 100 requisições por IP a cada 15 minutos
-  message: 'Muitas requisições para o serviço de lugares, tente novamente mais tarde'
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Muitas requisições para o serviço de lugares. Tente novamente mais tarde.',
+  skip: (req) => req.method === 'OPTIONS'
 });
 
 app.use(expressSession({
-  secret: process.env.GOOGLE_CLIENT_SECRET,
+  secret: process.env.SESSION_SECRET || process.env.GOOGLE_CLIENT_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
 
 app.use(passport.initialize());
