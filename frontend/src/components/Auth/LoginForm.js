@@ -1,7 +1,7 @@
 // src/components/Auth/LoginForm.js
 
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { loginUser, getProfile } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
@@ -34,28 +34,29 @@ function LoginForm() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'https://project4-2025a-antonio-lorenzo.onrender.com/auth/google';
+    window.location.href = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/auth/google` : 'https://project4-2025a-antonio-lorenzo.onrender.com/auth/google';
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <div>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" required />
-        </div>
-        <div>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" required />
-        </div>
-        <button type="submit">Entrar</button>
-      </form>
-      <hr />
+    <form onSubmit={handleSubmit}>
+      <h2>Login</h2>
+      {error && <p className="error-message">{error}</p>}
+      
+      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" required />
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" required />
+      
+      <button type="submit">Entrar</button>
 
-      <button onClick={handleGoogleLogin}>
-        Login com Google
+      {/* Botão de Login com Google melhorado */}
+      <button type="button" onClick={handleGoogleLogin} className="google-login-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo" />
+        Continuar com o Google
       </button>
-    </div>
+
+      <p className="form-footer-text">
+        Não tem uma conta? <Link to="/register">Crie uma aqui</Link>
+      </p>
+    </form>
   );
 }
 

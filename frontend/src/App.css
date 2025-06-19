@@ -388,3 +388,36 @@ button.btn-danger {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
+
+/* Adicione este código ao FINAL do seu src/App.css */
+
+/* --- Estilos do Novo Botão de Login com Google --- */
+.google-login-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px; /* Espaço entre o logo e o texto */
+  
+  background-color: #ffffff !important; /* Fundo branco, !important para sobrescrever o azul padrão */
+  color: #4a4a4a !important; /* Cor do texto cinza escuro */
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  font-weight: 600;
+}
+
+.google-login-btn:hover {
+  background-color: #f7f7f7 !important;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.google-login-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Texto de rodapé para o formulário */
+.form-footer-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
