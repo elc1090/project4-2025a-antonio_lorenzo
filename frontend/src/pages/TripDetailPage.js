@@ -72,20 +72,27 @@ function TripDetailPage() {
       }
   };
 
-  const handleGenerateItinerary = async () => {
-      if (places.length === 0) {
-          alert("Busque e encontre alguns lugares primeiro!");
-          return;
-      }
-      const placeNames = places.map(p => p.nome).join(', ');
-      try {
-          const { data } = await getItinerary(placeNames, 8); // Exemplo: 8 horas disponíveis
-          setItinerary(data.itinerary || data.fallback.itinerary);
-      } catch (err) {
-          setError('Erro ao gerar roteiro.');
-      }
-  };
+// src/pages/TripDetailPage.js
 
+ const handleGenerateItinerary = async () => {
+   if (places.length === 0) {
+     alert("Busque e encontre alguns lugares primeiro!");
+     return;
+   }
+   const placeNames = places.map(p => p.nome).join(', ');
+   try {
+     const { data } = await getItinerary(placeNames, 8);
+     setItinerary(data.itinerary || data.fallback.itinerary);
+     setError(''); // Limpa erros antigos
+   } catch (err) {
+     // --- INÍCIO DA MUDANÇA ---
+     // Agora vamos exibir o erro detalhado que vem do backend
+     const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Erro desconhecido ao gerar roteiro.';
+     setError(`Falha ao gerar roteiro: ${errorMessage}`);
+     console.error(err.response); // Loga a resposta completa do erro no console do navegador
+     // --- FIM DA MUDANÇA ---
+   }
+ };
   if (loading) return <div>Carregando...</div>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
   if (!trip) return <p>Viagem não encontrada.</p>;

@@ -21,7 +21,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: rgba(255, 255, 255, 0.444);
 }
 
 .App-link {
@@ -72,9 +72,17 @@
 }
 
 .nav-logo {
-  font-size: 1.5rem;
+  font-size: 1.8rem; /* Voltando ao tamanho original ou o que preferir */
   font-weight: 700;
-  color: var(--primary-color);
+  color: var(--primary-color); /* Esta linha define a cor azul */
+  text-decoration: none;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo:hover {
+  transform: scale(1.05); /* Efeito de zoom simples ao passar o mouse */
 }
 
 /* --- Formulários --- */
@@ -134,6 +142,13 @@ button.btn-secondary {
 
 button.btn-danger {
   background: var(--danger-color);
+}
+
+.button-group {
+  display: flex;
+  align-items: center;
+  gap: 1.0rem;
+  margin-bottom: 15px;
 }
 
 /* --- Estilos Específicos de Página --- */
@@ -240,10 +255,21 @@ button.btn-danger {
 }
 
 /* Seção de Funcionalidades */
+/* COMO ESTÁ ATUALMENTE (FUNDO NA SEÇÃO INTEIRA) */
 .features-section {
   padding: 4rem 2rem;
   text-align: center;
-  background: #fff;
+  background: linear-gradient(to bottom, #ffffff, #f7f9fc);
+  border-top: 1px solid #e9ecef; /* Adiciona uma linha sutil para separar as seções */
+}
+
+/* 2. Deixamos o fundo do cartão branco para ele se destacar */
+.feature-card {
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease;
+  background: var(--container-bg-color); /* Usa a variável para branco (#ffffff) */
 }
 
 .section-title {
@@ -275,4 +301,90 @@ button.btn-danger {
   font-size: 3rem;
   margin-bottom: 1rem;
   display: block;
+}
+
+
+/* Adicione este código ao FINAL do seu src/App.css */
+
+/* --- Estilos do Novo Dashboard --- */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Permite que os botões quebrem a linha em telas pequenas */
+  margin-bottom: 2rem;
+}
+
+.form-container {
+  background-color: #1f7fec;
+  border-radius: 8px;
+  padding: 1px 0; /* Apenas para conter as margens do formulário */
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center;     /* Centraliza verticalmente */
+}
+
+.form-container form {
+  box-shadow: none;
+  margin: 1rem;
+}
+
+.form-container label {
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+/* Grade de Viagens */
+.trip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.trip-card {
+  background: var(--container-bg-color);
+  border-radius: 10px;
+  overflow: hidden; /* Garante que a imagem não saia dos cantos arredondados */
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.trip-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.trip-card-image {
+  height: 180px;
+  background-color: var(--primary-color);
+  background-image: linear-gradient(to right, #007bff, #0056b3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  position: relative;
+}
+
+.trip-card-destination {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.trip-card-content {
+  padding: 1.5rem;
+  flex-grow: 1; /* Faz esta parte crescer para preencher o espaço */
+}
+
+.trip-card-content h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }

@@ -1,6 +1,8 @@
+// src/pages/DashboardPage.js
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getTrips, createTrip } from '../services/api'; // Precisaremos adicionar createTrip em api.js
+import { getTrips, createTrip } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 function DashboardPage() {
@@ -14,7 +16,7 @@ function DashboardPage() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const { data } = await getTrips(); // Função que chama GET /trips
+        const { data } = await getTrips();
         setTrips(data);
       } catch (err) {
         setError('Falha ao carregar viagens.');
@@ -29,54 +31,68 @@ function DashboardPage() {
   };
   
   const handleCreateTrip = async (e) => {
-      e.preventDefault();
-      try {
-          const { data: createdTrip } = await createTrip(newTrip);
-          setTrips([...trips, createdTrip]); // Adiciona a nova viagem à lista
-          setShowForm(false); // Esconde o formulário
-          setNewTrip({ title: '', destination: '', startDate: '', endDate: '' }); // Limpa o formulário
-      } catch (err) {
-          setError('Falha ao criar viagem. Verifique os dados.');
-      }
+    e.preventDefault();
+    if (new Date(newTrip.endDate) < new Date(newTrip.startDate)) {
+        setError("A data de fim não pode ser anterior à data de início.");
+        return;
+    }
+    setError('');
+    try {
+        const { data: createdTrip } = await createTrip(newTrip);
+        setTrips([...trips, createdTrip]);
+        setShowForm(false);
+        setNewTrip({ title: '', destination: '', startDate: '', endDate: '' });
+    } catch (err) {
+        setError('Falha ao criar viagem. Verifique os dados.');
+    }
   };
 
   return (
     <div>
-      <h1>Minhas Viagens</h1>
-      {user && <p>Olá, {user.name}!</p>}
-      <button onClick={handleLogout} style={{ marginRight: '10px', marginBottom: '20px' }}>Sair</button>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <div className="dashboard-header">
+        <h1>Minhas Viagens</h1>
+        <div className="button-group">
+            <button onClick={() => setShowForm(!showForm)} className="btn-primary">
+                {showForm ? 'Cancelar' : '＋ Criar Nova Viagem'}
+            </button>
+            <button onClick={handleLogout} className="btn-secondary">Sair</button>
+        </div>
+      </div>
       
-      <button onClick={() => setShowForm(!showForm)}>
-        {showForm ? 'Cancelar' : 'Criar Nova Viagem'}
-      </button>
-
+      {/* Exibe o formulário de forma mais elegante */}
       {showForm && (
-        <form onSubmit={handleCreateTrip} style={{ marginTop: '20px', border: '1px solid #ccc', padding: '15px' }}>
-            <h3>Nova Viagem</h3>
-            <input type="text" placeholder="Título (ex: Férias em Paris)" value={newTrip.title} onChange={e => setNewTrip({...newTrip, title: e.target.value})} required />
-            <input type="text" placeholder="Destino (ex: Paris, França)" value={newTrip.destination} onChange={e => setNewTrip({...newTrip, destination: e.target.value})} required />
-            <input type="date" placeholder="Data de Início" value={newTrip.startDate} onChange={e => setNewTrip({...newTrip, startDate: e.target.value})} required />
-            <input type="date" placeholder="Data de Fim" value={newTrip.endDate} onChange={e => setNewTrip({...newTrip, endDate: e.target.value})} required />
-            <button type="submit">Salvar Viagem</button>
-        </form>
+        <div className="form-container">
+            <form onSubmit={handleCreateTrip}>
+                <h3>Planeje sua próxima aventura</h3>
+                {error && <p className="error-message">{error}</p>}
+                <input type="text" placeholder="Título (ex: Férias em Paris)" value={newTrip.title} onChange={e => setNewTrip({...newTrip, title: e.target.value})} required />
+                <input type="text" placeholder="Destino (ex: Paris, França)" value={newTrip.destination} onChange={e => setNewTrip({...newTrip, destination: e.target.value})} required />
+                <label>Data de Início:</label>
+                <input type="date" value={newTrip.startDate} onChange={e => setNewTrip({...newTrip, startDate: e.target.value})} required />
+                <label>Data de Fim:</label>
+                <input type="date" value={newTrip.endDate} onChange={e => setNewTrip({...newTrip, endDate: e.target.value})} required />
+                <button type="submit">Salvar Viagem</button>
+            </form>
+        </div>
       )}
 
-      <div style={{ marginTop: '30px' }}>
-        <h2>Suas Viagens Salvas:</h2>
+      {/* Grade de cartões de viagem */}
+      <div className="trip-grid">
         {trips.length > 0 ? (
-          <ul>
-            {trips.map(trip => (
-              <li key={trip.id}>
-                <Link to={`/trips/${trip.id}`}>
-                  <strong>{trip.title}</strong> ({trip.destination})
-                </Link>
-              </li>
-            ))}
-          </ul>
+          trips.map(trip => (
+            <Link to={`/trips/${trip.id}`} key={trip.id} className="trip-card">
+              <div className="trip-card-image">
+                {/* Você pode adicionar uma imagem de fundo aqui no futuro */}
+                <span className="trip-card-destination">{trip.destination}</span>
+              </div>
+              <div className="trip-card-content">
+                <h3>{trip.title}</h3>
+                <p>{new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}</p>
+              </div>
+            </Link>
+          ))
         ) : (
-          <p>Você ainda não tem nenhuma viagem. Que tal criar uma?</p>
+          !showForm && <p>Você ainda não tem nenhuma viagem. Que tal criar uma?</p>
         )}
       </div>
     </div>

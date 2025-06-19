@@ -25,7 +25,7 @@ function App() {
       <nav className="navbar">
         {/* O logo usa a classe 'nav-logo' para destaque */}
         <Link to="/" className="nav-logo">
-          TripPlanner
+          TripPlanner ✈️ 
         </Link>
         
         {/* Agrupamos os links para facilitar o alinhamento */}
