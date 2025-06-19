@@ -14,7 +14,7 @@ const app = express();
 
 
 const allowedOrigins = [
-  'http://localhost:3000'
+  'https://elc1090.github.io/project4-2025a-antonio_lorenzo/'
 ];
 
 const corsOptions = {
