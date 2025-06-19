@@ -6,10 +6,10 @@ function HomePage() {
   const { user } = useAuth();
 
   // URL de imagem PERMANENTE para o visitante (colagem de viagens)
-  const loggedOutImage = '/images/hero-background.png';
+  const loggedOutImage = `${process.env.PUBLIC_URL}/images/hero-background.png`;
   
   // URL de imagem PERMANENTE para o usuário logado (planejamento)
-  const loggedInImage = '/images/user-background.png';
+  const loggedInImage = `${process.env.PUBLIC_URL}/images/user-background.png`;
 
   const heroStyle = {
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${user ? loggedInImage : loggedOutImage})`,
