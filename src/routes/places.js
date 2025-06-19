@@ -13,7 +13,6 @@ const placeCache = new Map();
 const model = genAI.getGenerativeModel({ 
   model: "gemini-1.5-pro-latest",
   generationConfig: {
-    maxOutputTokens: 1000,
     temperature: 0.5
   }
 });
