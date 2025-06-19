@@ -14,7 +14,7 @@ const app = express();
 
 
 const allowedOrigins = [
-  'https://elc1090.github.io/project4-2025a-antonio_lorenzo/'
+  'https://elc1090.github.io/project4-2025a-antonio_lorenzo'
 ];
 
 const corsOptions = {
@@ -30,7 +30,7 @@ const corsOptions = {
   credentials: true
 };
 app.use(cors(corsOptions));
-
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 
