@@ -46,14 +46,20 @@ const placesLimiter = rateLimit({
   skip: (req) => req.method === 'OPTIONS'
 });
 
+const pgSession = require('connect-pg-simple')(expressSession);
+
 app.use(expressSession({
+  store: new pgSession({
+    conString: process.env.DATABASE_URL, // sua conexão PostgreSQL
+    createTableIfMissing: true            // cria a tabela de sessão automaticamente
+  }),
   secret: process.env.SESSION_SECRET || process.env.GOOGLE_CLIENT_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production', 
     sameSite: 'lax',
-    maxAge: 24 * 60 * 60 * 1000
+    maxAge: 24 * 60 * 60 * 1000 // 1 dia
   }
 }));
 
