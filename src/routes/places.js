@@ -13,46 +13,64 @@ const placeCache = new Map();
 const model = genAI.getGenerativeModel({ 
   model: "gemini-1.5-pro-latest",
   generationConfig: {
-    maxOutputTokens: 500,
+    maxOutputTokens: 1000,
     temperature: 0.5
   }
 });
+
+
+function extractJSON(text) {
+  const firstBrace = text.indexOf('{');
+  const firstBracket = text.indexOf('[');
+  const start = firstBrace === -1 ? firstBracket : 
+                firstBracket === -1 ? firstBrace : 
+                Math.min(firstBrace, firstBracket);
+
+  if (start === -1) throw new Error('Nenhum JSON encontrado.');
+
+  let stack = [];
+  let end = start;
+
+  for (let i = start; i < text.length; i++) {
+    const char = text[i];
+
+    if (char === '{' || char === '[') {
+      stack.push(char);
+    } else if (char === '}' || char === ']') {
+      const last = stack.pop();
+      if ((char === '}' && last !== '{') || (char === ']' && last !== '[')) {
+        throw new Error('JSON mal formatado.');
+      }
+      if (stack.length === 0) {
+        end = i + 1;
+        break;
+      }
+    }
+  }
+
+  const jsonString = text.slice(start, end);
+  return JSON.parse(jsonString);
+}
+
+
 
 // Função auxiliar para processar respostas do Gemini
 async function generateGeminiContent(prompt, isJson = true) {
   try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    let text = response.text();
-    
-    if (isJson) {
-      // Remove all markdown code blocks
-      text = text.replace(/```(json)?/g, '').trim();
-      
-      // Find the first { or [ and the last } or ]
-      const jsonStart = Math.max(0, Math.min(
-        text.indexOf('{'),
-        text.indexOf('[') > -1 ? text.indexOf('[') : Infinity
-      ));
-      
-      const jsonEnd = Math.max(
-        text.lastIndexOf('}'),
-        text.lastIndexOf(']')
-      ) + 1;
-      
-      if (jsonStart < 0 || jsonEnd <= 0) {
-        throw new Error('No JSON found in response');
-      }
-      
-      const jsonString = text.slice(jsonStart, jsonEnd);
-      return JSON.parse(jsonString);
-    }
-    return text;
+    const text = response.text();
+
+    if (!isJson) return text;
+
+    return extractJSON(text);
   } catch (err) {
-    console.error('Erro Gemini:', err);
+    console.error('Gemini error:', { prompt, err });
     throw err;
   }
 }
+
+
 
 router.get('/search', async (req, res) => {
   const { query, near, getTips } = req.query;
@@ -190,7 +208,7 @@ router.get('/itinerary', async (req, res) => {
     - dicas específicas
     - como chegar ao próximo local
     
-    IMPORTANTE: Retorne APENAS o JSON válido, sem nenhum texto adicional ou comentários.`;
+    IMPORTANTE: Não adicione nenhuma explicação, comentários ou texto fora do JSON. Retorne APENAS JSON válido.`;
 
     let itinerary;
     try {

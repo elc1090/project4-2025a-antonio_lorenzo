@@ -36,7 +36,7 @@ app.use(express.json());
 
 dotenv.config();
 
-app.set('trust proxy', true);
+app.set('trust proxy', false);
 
 // Configuração de rate limiting para a API do Google Places
 const placesLimiter = rateLimit({
