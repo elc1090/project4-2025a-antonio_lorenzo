@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { getProfile } from '../services/api'; 
+import { getProfile } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -7,12 +7,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Ao iniciar, verifica se tem token e busca perfil
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          // Busca os dados do usuário usando o token
+          // Define o token para requisições (depende do seu api.js)
+          // Exemplo: api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
           const { data } = await getProfile();
           setUser(data);
         } catch (error) {
@@ -27,8 +30,13 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const login = (userData) => {
-    setUser(userData);
+  // Aqui você recebe token e dados do usuário
+  const login = ({ token, user }) => {
+    if (token) {
+      localStorage.setItem('token', token);
+      // Também configure seu cliente API para usar o token nas chamadas
+    }
+    setUser(user);
   };
 
   const logout = () => {
@@ -43,6 +51,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
