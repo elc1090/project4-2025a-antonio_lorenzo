@@ -19,8 +19,7 @@ function App() {
   const { user, logout } = useAuth();
 
   return (
-    <Router>
-      {}
+    <Router basename={process.env.PUBLIC_URL}>
       <nav className="navbar">
         {}
         <Link to="/" className="nav-logo">
