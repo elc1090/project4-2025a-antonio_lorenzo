@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../../services/api';
+import { toast } from 'react-toastify';
 
 function RegisterForm() {
   const [name, setName] = useState('');
@@ -13,9 +14,8 @@ function RegisterForm() {
     e.preventDefault();
     setError(''); // Limpa erros anteriores
     try {
-      // A rota de registro espera 'name', 'email' e 'password' no corpo da requisição.
       await registerUser({ name, email, password });
-      alert('Usuário registrado com sucesso!');
+      toast.warn('Usuário registrado com sucesso!');
       navigate('/login'); // Redireciona para a página de login após o sucesso.
     } catch (err) {
       // Exibe a mensagem de erro que vem do backend, se houver.

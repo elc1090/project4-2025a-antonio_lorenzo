@@ -1,5 +1,3 @@
-// src/pages/DashboardPage.js
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getTrips, createTrip } from '../services/api';
@@ -59,7 +57,7 @@ function DashboardPage() {
         </div>
       </div>
       
-      {/* Exibe o formulário de forma mais elegante */}
+      {}
       {showForm && (
         <div className="form-container">
             <form onSubmit={handleCreateTrip}>
@@ -82,7 +80,7 @@ function DashboardPage() {
           trips.map(trip => (
             <Link to={`/trips/${trip.id}`} key={trip.id} className="trip-card">
               <div className="trip-card-image">
-                {/* Você pode adicionar uma imagem de fundo aqui no futuro */}
+                {}
                 <span className="trip-card-destination">{trip.destination}</span>
               </div>
               <div className="trip-card-content">

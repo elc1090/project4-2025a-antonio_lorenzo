@@ -37,11 +37,9 @@
   }
 }
 
-/* src/App.css */
-
 /* --- Layout Principal --- */
 .container {
-  max-width: 90%; /* Alteramos de 1100px para 90% da largura da tela */
+  max-width: 90%; 
   margin: 2rem auto;
   padding: 0 2rem;
 }
@@ -72,9 +70,9 @@
 }
 
 .nav-logo {
-  font-size: 1.8rem; /* Voltando ao tamanho original ou o que preferir */
+  font-size: 1.8rem; 
   font-weight: 700;
-  color: var(--primary-color); /* Esta linha define a cor azul */
+  color: var(--primary-color); 
   text-decoration: none;
   transition: transform 0.3s ease;
   display: flex;
@@ -82,7 +80,7 @@
 }
 
 .nav-logo:hover {
-  transform: scale(1.05); /* Efeito de zoom simples ao passar o mouse */
+  transform: scale(1.05); 
 }
 
 /* --- Formulários --- */
@@ -151,8 +149,6 @@ button.btn-danger {
   margin-bottom: 15px;
 }
 
-/* --- Estilos Específicos de Página --- */
-
 /* Dashboard e Detalhes da Viagem */
 .trip-list li {
   background: var(--container-bg-color);
@@ -185,19 +181,13 @@ button.btn-danger {
   margin-bottom: 1rem;
 }
 
-
-
-/* --- Estilos da Nova Página Inicial --- */
-
 .homepage {
-  /* Remove o padding padrão do .container para a homepage */
   width: 100%;
   max-width: none;
   padding: 0;
-  margin: -2rem 0 0 0; /* Ajuste para preencher o espaço do container */
+  margin: -2rem 0 0 0; 
 }
 
-/* COMO VAI FICAR (COM EFEITO PARALLAX) */
 .hero-section {
   height: 70vh;
   display: flex;
@@ -206,22 +196,21 @@ button.btn-danger {
   text-align: center;
   color: white;
   
-  /* Efeito da imagem de fundo */
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* <-- ADICIONE ESTA LINHA */
+  background-attachment: fixed; 
 }
 .hero-section {
   background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* Efeito Parallax */
+  background-attachment: fixed; 
 }
 
 .hero-content {
   max-width: 800px;
   padding: 2rem;
-  background: rgba(0,0,0,0.2); /* Fundo sutil para legibilidade */
+  background: rgba(0,0,0,0.2); 
   border-radius: 10px;
 }
 
@@ -255,21 +244,20 @@ button.btn-danger {
 }
 
 /* Seção de Funcionalidades */
-/* COMO ESTÁ ATUALMENTE (FUNDO NA SEÇÃO INTEIRA) */
+
 .features-section {
   padding: 4rem 2rem;
   text-align: center;
   background: linear-gradient(to bottom, #ffffff, #f7f9fc);
-  border-top: 1px solid #e9ecef; /* Adiciona uma linha sutil para separar as seções */
+  border-top: 1px solid #e9ecef; 
 }
 
-/* 2. Deixamos o fundo do cartão branco para ele se destacar */
 .feature-card {
   padding: 2rem;
   border-radius: 10px;
   box-shadow: var(--shadow);
   transition: transform 0.3s ease;
-  background: var(--container-bg-color); /* Usa a variável para branco (#ffffff) */
+  background: var(--container-bg-color); 
 }
 
 .section-title {
@@ -303,29 +291,24 @@ button.btn-danger {
   display: block;
 }
 
-
-/* Adicione este código ao FINAL do seu src/App.css */
-
-/* --- Estilos do Novo Dashboard --- */
-
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap; /* Permite que os botões quebrem a linha em telas pequenas */
+  flex-wrap: wrap;
   margin-bottom: 2rem;
 }
 
 .form-container {
   background-color: #1f7fec;
   border-radius: 8px;
-  padding: 1px 0; /* Apenas para conter as margens do formulário */
+  padding: 1px 0; 
   margin-bottom: 2rem;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 
   display: flex;
-  justify-content: center; /* Centraliza horizontalmente */
-  align-items: center;     /* Centraliza verticalmente */
+  justify-content: center;
+  align-items: center;  
 }
 
 .form-container form {
@@ -338,7 +321,6 @@ button.btn-danger {
   margin-top: 0.5rem;
 }
 
-/* Grade de Viagens */
 .trip-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -348,7 +330,7 @@ button.btn-danger {
 .trip-card {
   background: var(--container-bg-color);
   border-radius: 10px;
-  overflow: hidden; /* Garante que a imagem não saia dos cantos arredondados */
+  overflow: hidden; 
   box-shadow: var(--shadow);
   transition: all 0.3s ease;
   text-decoration: none;
@@ -381,7 +363,7 @@ button.btn-danger {
 
 .trip-card-content {
   padding: 1.5rem;
-  flex-grow: 1; /* Faz esta parte crescer para preencher o espaço */
+  flex-grow: 1; 
 }
 
 .trip-card-content h3 {
@@ -389,17 +371,14 @@ button.btn-danger {
   margin-bottom: 0.5rem;
 }
 
-/* Adicione este código ao FINAL do seu src/App.css */
-
-/* --- Estilos do Novo Botão de Login com Google --- */
 .google-login-btn {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px; /* Espaço entre o logo e o texto */
+  gap: 12px; 
   
-  background-color: #ffffff !important; /* Fundo branco, !important para sobrescrever o azul padrão */
-  color: #4a4a4a !important; /* Cor do texto cinza escuro */
+  background-color: #ffffff !important; 
+  color: #4a4a4a !important; 
   border: 1px solid #ddd;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   font-weight: 600;
@@ -415,9 +394,431 @@ button.btn-danger {
   height: 20px;
 }
 
-/* Texto de rodapé para o formulário */
 .form-footer-text {
   text-align: center;
   margin-top: 1.5rem;
   font-size: 0.9rem;
 }
+
+/* --- Estilos da Página de Detalhes da Viagem --- */
+
+.trip-detail-header {
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+}
+
+.result-card {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+
+.result-card h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.result-card p {
+  margin-bottom: 0.5rem;
+}
+
+.result-card strong {
+  font-weight: 600;
+}
+
+.result-card ul {
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+/* --- Estilos para Seleção de Lugares --- */
+.result-card-selectable {
+  display: flex;
+  align-items: flex-start;
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.result-card-selectable:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.result-card-selectable input[type="checkbox"] {
+  width: 1.2em;
+  height: 1.2em;
+  margin-top: 0.5rem;
+  margin-right: 1rem;
+  flex-shrink: 0; 
+}
+
+.result-card-selectable label {
+  cursor: pointer;
+  width: 100%;
+}
+
+.result-card-selectable label h4 {
+  margin-top: 0;
+  margin-bottom: 0.25rem;
+}
+
+/* --- Mensagem de Sucesso --- */
+.success-message {
+  color: white;
+  background: var(--success-color);
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Estilos para a seção de busca e seleção */
+.search-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-input-container input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-input-container button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-input-container button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.places-list {
+  margin-top: 20px;
+}
+
+.selection-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.places-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.place-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.place-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.place-card.selected {
+  border-color: #4CAF50;
+  background-color: #f8fff8;
+}
+
+.place-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.place-card-header h4 {
+  margin: 0;
+  color: #333;
+}
+
+.place-card-header input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
+.place-address {
+  color: #666;
+  font-size: 0.9em;
+  margin: 5px 0;
+}
+
+.place-tips {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.place-tips ul {
+  margin: 5px 0 0 15px;
+  padding: 0;
+}
+
+.selected-places-preview {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.selected-places-preview ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.selected-places-preview li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.remove-place-btn {
+  background: none;
+  border: none;
+  color: #ff4444;
+  cursor: pointer;
+  font-size: 1.2em;
+  padding: 0 5px;
+}
+
+
+.itinerary-container {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 25px;
+  margin-top: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.itinerary-steps {
+  margin-top: 20px;
+}
+
+.step-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.step-number {
+  background: #4CAF50;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 15px;
+}
+
+.step-info {
+  flex: 1;
+}
+
+.duration-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.tips-section, .transport-section {
+  margin-top: 15px;
+}
+
+.tips-section h4, .transport-section h4 {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.tips-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.tips-section li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.save-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  float: right;
+  transition: background 0.3s;
+}
+
+.save-button:hover {
+  background: #45a049;
+}
+
+/* Estilos para o itinerário */
+.timeline {
+  position: relative;
+  padding-left: 50px;
+  margin: 30px 0;
+}
+
+.timeline:before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e0e0e0;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #4a6fa5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+.timeline-content {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.step-number {
+  color: #4a6fa5;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.time-badge {
+  background: #f0f7ff;
+  color: #4a6fa5;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.step-tips {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  margin: 15px 0;
+}
+
+.step-tips h5 {
+  margin-top: 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.step-tips ul {
+  margin: 10px 0 0 0;
+  padding-left: 20px;
+}
+
+.step-tips li {
+  margin-bottom: 8px;
+}
+
+.travel-instruction {
+  display: flex;
+  align-items: center;
+  background: #f0f7ff;
+  padding: 12px 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.travel-icon {
+  margin-right: 10px;
+  color: #4a6fa5;
+}
+
+.travel-text {
+  font-size: 0.9rem;
+}
+
+.itinerary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.save-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.save-btn:hover {
+  background: #3e8e41;
+}
+

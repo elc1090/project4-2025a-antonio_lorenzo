@@ -1,5 +1,3 @@
-// src/pages/HomePage.js
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -13,14 +11,13 @@ function HomePage() {
   // URL de imagem PERMANENTE para o usuário logado (planejamento)
   const loggedInImage = '/images/user-background.png';
 
-  // O estilo do 'hero' agora escolhe a imagem dinamicamente
   const heroStyle = {
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${user ? loggedInImage : loggedOutImage})`,
   };
 
   return (
     <div className="homepage">
-      {/* A Seção de Herói agora é 100% dinâmica */}
+      {}
       <header className="hero-section" style={heroStyle}>
         <div className="hero-content">
           {user ? (

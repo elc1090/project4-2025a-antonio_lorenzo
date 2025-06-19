@@ -1,7 +1,5 @@
-// src/context/AuthContext.js
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { getProfile } from '../services/api'; // Supondo que você tenha uma função para buscar o perfil
+import { getProfile } from '../services/api'; 
 
 const AuthContext = createContext(null);
 

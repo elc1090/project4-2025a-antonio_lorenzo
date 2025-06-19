@@ -7,7 +7,6 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   if (loading) {
-    // Pode mostrar um spinner de carregamento aqui
     return <div>Carregando...</div>;
   }
 
