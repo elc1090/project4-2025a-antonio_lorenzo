@@ -1,8 +1,9 @@
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+
 
 // Importação das páginas e componentes
 import HomePage from './pages/HomePage';
