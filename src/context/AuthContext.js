@@ -1,58 +1,40 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
-import { getProfile } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { getProfile } from '../services/api'; 
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
-  // Função para atualizar o token nas requisições
-  const setAuthToken = useCallback((token) => {
-    if (token) {
-      localStorage.setItem('token', token);
-
-    } else {
-      localStorage.removeItem('token');
-
-    }
-  }, []);
-
-  // Carrega o usuário ao iniciar
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          setAuthToken(token);
+    const initAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          // Busca os dados do usuário usando o token
           const { data } = await getProfile();
           setUser(data);
+        } catch (error) {
+          console.error("Sessão inválida, limpando token.", error);
+          localStorage.removeItem('token');
+          setUser(null);
         }
-      } catch (error) {
-        console.error("Falha ao carregar perfil", error);
-        setAuthToken(null);
-        setUser(null);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
-    loadUser();
-  }, [setAuthToken]);
+    initAuth();
+  }, []);
 
-  const login = useCallback(async ({ token, user }) => {
-    setAuthToken(token);
-    setUser(user);
-    navigate('/dashboard', { replace: true }); // Redireciona sem precisar de F5
-  }, [navigate, setAuthToken]);
+  const login = (userData) => {
+    setUser(userData);
+  };
 
-  const logout = useCallback(() => {
-    setAuthToken(null);
+  const logout = () => {
+    localStorage.removeItem('token');
     setUser(null);
-    navigate('/login', { replace: true });
-  }, [navigate, setAuthToken]);
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
@@ -61,4 +43,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

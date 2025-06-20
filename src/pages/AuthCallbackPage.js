@@ -18,7 +18,7 @@ function AuthCallbackPage() {
         try {
             // Atualiza o contexto com os dados do usuário
             const profileRes = await getProfile();
-            login(profileRes.data);
+            login({ token, user: profileRes.data }); // <-- CORRETO AQUI
             navigate('/dashboard');
         } catch {
             navigate('/login?error=profile_failed');
