@@ -20,8 +20,8 @@ function App() {
   const { user, logout } = useAuth();
 
   return (
-      <Router basename="/project4-2025a-antonio_lorenzo">
-      <nav className="navbar">
+  <Router>      
+  <nav className="navbar">
         {}
         <Link to="/" className="nav-logo">
           TripPlanner ✈️ 
