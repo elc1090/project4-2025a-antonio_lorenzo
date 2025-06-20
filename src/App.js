@@ -1,7 +1,7 @@
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { HashRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
+import { BrowseRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 
 
