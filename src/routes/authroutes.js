@@ -14,20 +14,20 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 
 router.get('/google/callback', 
   passport.authenticate('google', { 
-    failureRedirect: 'https://elc1090.github.io/project4-2025a-antonio_lorenzo/auth/login?error=google_failed',
+    failureRedirect: 'https://project4-2025a-antonio-lorenzo.netlify.app/auth/login?error=google_failed',
     session: false 
   }), 
   (req, res) => {
     // Verificação de segurança extra (opcional)
     if (!req.user) {
-      return res.redirect('https://elc1090.github.io/project4-2025a-antonio_lorenzo/auth/login?error=unauthorized');
+      return res.redirect('https://project4-2025a-antonio-lorenzo.netlify.app/auth/login?error=unauthorized');
     }
 
     // Geração do token JWT
     const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     // Redirecionamento para o frontend com o token
-    res.redirect(`https://elc1090.github.io/project4-2025a-antonio_lorenzo/auth/callback?token=${token}`);
+    res.redirect(`https://project4-2025a-antonio-lorenzo.netlify.app/auth/callback?token=${token}`);
   }
 );
 

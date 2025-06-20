@@ -19,7 +19,7 @@ app.set('trust proxy', 1);
 
 
 const allowedOrigins = [
-  'https://elc1090.github.io'
+  'https://project4-2025a-antonio-lorenzo.netlify.app'
 ];
 
 app.use((req, res, next) => {
