@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getTripById, deleteTrip, searchPlaces, getRecommendations, getItinerary, saveItinerary } from '../services/api';
 import { toast } from 'react-toastify'
+import MapWithMarkers from '../components/MapWithMarkers';
 
 
 const LoadingSpinner = () => (
@@ -293,6 +294,13 @@ const handleDelete = async () => {
             </div>
           ))}
         </div>
+
+        {places.length > 0 && places.every(p => p.lat && p.lng) && (
+        <div style={{ marginTop: '2rem' }}>
+          <h3>Visualização no Mapa</h3>
+          <MapWithMarkers places={places} />
+        </div>
+        )}
 
         {selectedPlaces.length > 0 && (
           <div className="selected-summary">
