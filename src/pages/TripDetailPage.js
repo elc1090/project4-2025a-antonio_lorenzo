@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTripById, deleteTrip, searchPlaces, getRecommendations, getItinerary, saveItinerary } from '../services/api';
-import { toast } from 'react-toastify'
+import { getTripById, deleteTrip, searchPlaces, getRecommendations, getItinerary } from '../services/api';
+import { toast } from 'react-toastify';
 import MapWithMarkers from '../components/MapWithMarkers';
-
 
 const LoadingSpinner = () => (
   <div className="spinner-container">
@@ -23,7 +22,6 @@ function TripDetailPage() {
   const [loading, setLoading] = useState(true);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -52,38 +50,37 @@ function TripDetailPage() {
     fetchTrip();
   }, [id]);
 
-const handleDelete = async () => {
-  // Cria um toast com botões de confirmação
-  const confirmToast = toast(
-    <div>
-      <p>Tem certeza que deseja deletar esta viagem?</p>
-      <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-        <button 
-          onClick={async () => {
-            try {
-              await deleteTrip(id);
-              toast.dismiss(confirmToast); // Fecha o toast de confirmação
-              toast.warn('Viagem deletada!');
-              navigate('/dashboard');
-            } catch (err) {
-              setError(`Falha ao deletar viagem: ${getErrorMessage(err)}`);
-            }
-          }}
-        >
-          Sim
-        </button>
-        <button onClick={() => toast.dismiss(confirmToast)}>Cancelar</button>
-      </div>
-    </div>,
-    { autoClose: false, closeButton: false } // Evita fechar automaticamente
-  );
-};
+  const handleDelete = async () => {
+    const confirmToast = toast(
+      <div>
+        <p>Tem certeza que deseja deletar esta viagem?</p>
+        <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={async () => {
+              try {
+                await deleteTrip(id);
+                toast.dismiss(confirmToast);
+                toast.warn('Viagem deletada!');
+                navigate('/dashboard');
+              } catch (err) {
+                setError(`Falha ao deletar viagem: ${getErrorMessage(err)}`);
+              }
+            }}
+          >
+            Sim
+          </button>
+          <button onClick={() => toast.dismiss(confirmToast)}>Cancelar</button>
+        </div>
+      </div>,
+      { autoClose: false, closeButton: false }
+    );
+  };
 
   const handlePlaceSelection = (place) => {
     setSelectedPlaces(prevSelected => {
-      const isSelected = prevSelected.some(p => p.nome === place.nome);
+      const isSelected = prevSelected.some(p => p.placeId === place.placeId);
       if (isSelected) {
-        return prevSelected.filter(p => p.nome !== place.nome);
+        return prevSelected.filter(p => p.placeId !== place.placeId);
       } else {
         if (prevSelected.length < 4) {
           return [...prevSelected, place];
@@ -105,8 +102,19 @@ const handleDelete = async () => {
     setError('');
     setPlaces([]);
     try {
-      const { data } = await searchPlaces(searchQuery, trip.destination);
-      setPlaces(data);
+      const { data } = await searchPlaces(searchQuery, trip.destination, true);
+      
+      const placesWithPhotos = data.map(place => ({
+        ...place,
+        photoUrl: place.photo 
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+          : null,
+        imagem: place.photo 
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+          : null
+      }));
+      
+      setPlaces(placesWithPhotos);
     } catch (err) {
       setError(`Erro ao buscar lugares: ${getErrorMessage(err)}`);
     } finally {
@@ -141,63 +149,30 @@ const handleDelete = async () => {
 
     setIsAiLoading(true);
     setError('');
-    setSuccess('');
     setItinerary(null);
     const placeNames = selectedPlaces.map(p => p.nome).join(', ');
 
     try {
-      const { data } = await getItinerary(placeNames, 8);
-      console.log("Resposta da API para o roteiro:", data);
-
-      let locaisArray = null;
-      let nomeRoteiro = "Roteiro Personalizado";
-
-      // 1. Lógica final para encontrar o array de locais, agora incluindo inglês
-      if (Array.isArray(data.locais)) locaisArray = data.locais;
-      else if (Array.isArray(data.locations)) locaisArray = data.locations;
-      else if (Array.isArray(data.itinerary)) locaisArray = data.itinerary; // <<< ADICIONADO
-      else if (Array.isArray(data.itinerario)) locaisArray = data.itinerario;
-      else if (Array.isArray(data.roteiro)) locaisArray = data.roteiro;
-      else if (Array.isArray(data.visit_plan)) locaisArray = data.visit_plan;
-      else if (Array.isArray(data.visita)) locaisArray = data.visita;
-      else if (Array.isArray(data)) locaisArray = data;
-
-      // 2. Lógica para encontrar o nome do roteiro
-      if (data && typeof data === 'object' && !Array.isArray(data)) {
-          nomeRoteiro = data.title || data.nome || data.museum || data.itinerary_name || nomeRoteiro;
+      const { data } = await getItinerary(placeNames, 8, '');
+      
+      // Normalização da resposta
+      let itineraryData = data.itinerary || data;
+      
+      if (!Array.isArray(itineraryData)) {
+        itineraryData = Object.values(itineraryData).find(val => Array.isArray(val)) || [];
       }
 
-      // 3. Verifica se o array de locais foi encontrado e não está vazio
-      if (locaisArray && locaisArray.length > 0) {
-        // 4. Normaliza os dados de cada local, incluindo a nova chave de transporte
-        const locaisNormalizados = locaisArray
-          .map(item => {
-            if (!item || typeof item !== 'object') return null;
-            return {
-              nome: item.local || item.nome || item.name || item.lugar || item.location,
-              tempo: item.tempo || item.duration || item.time || 'N/A',
-              dicas: item.dicas || item.tips || [],
-              travel: item.transporte_proximo || item.next_transport || item.transport || (item.next_location ? `Próximo: ${item.next_location}`: '') // <<< ADICIONADO 'transport'
-            };
-          })
-          .filter(item => item && item.nome);
+      const normalizedItinerary = {
+        nome: data.title || "Roteiro Personalizado",
+        locais: itineraryData.map((item, index) => ({
+          nome: item.place || item.nome || item.name || `Local ${index + 1}`,
+          tempo: item.duration || item.tempo || item.time || '1-2 horas',
+          dicas: item.tips || item.dicas || [],
+          travel: item.transport || item.travel || 'Táxi ou transporte público'
+        }))
+      };
 
-        // 5. Verifica se, após a filtragem, ainda existem locais válidos
-        if (locaisNormalizados.length > 0) {
-          const roteiroFinal = {
-            nome: nomeRoteiro,
-            locais: locaisNormalizados,
-          };
-          setItinerary(roteiroFinal);
-        } else {
-          setError("A IA retornou sugestões em um formato que não pôde ser lido. Tente novamente.");
-          console.error("Itens do roteiro não puderam ser normalizados:", locaisArray);
-        }
-      } else {
-        setError("A IA não conseguiu gerar um roteiro com os locais selecionados. Por favor, tente outras opções.");
-        console.error("Formato do roteiro não reconhecido ou vazio:", data);
-      }
-
+      setItinerary(normalizedItinerary);
     } catch (err) {
       console.error("Erro detalhado ao gerar roteiro:", err);
       setError(`Falha ao gerar roteiro: ${getErrorMessage(err)}`);
@@ -207,39 +182,24 @@ const handleDelete = async () => {
   };
 
   const handleSaveItinerary = () => {
-    // 1. Verifica se existe um roteiro para ser salvo
     if (!itinerary) {
       toast.warn('Nenhum roteiro para salvar!');
       return;
     }
 
-    try {
-      // 2. Cria um nome de arquivo dinâmico e seguro
-      const fileName = `roteiro-${itinerary.nome.toLowerCase().replace(/[^a-z0-9]/g, '-')}.json`;
-
-      const jsonString = JSON.stringify(itinerary, null, 2);
-
-      const blob = new Blob([jsonString], { type: 'application/json' });
-
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = fileName; 
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      URL.revokeObjectURL(url);
-      
-      setSuccess('Seu roteiro está sendo baixado!');
-      setTimeout(() => setSuccess(''), 4000);
-
-    } catch (err) {
-      console.error("Erro ao gerar arquivo para download:", err);
-      setError('Ocorreu um erro ao tentar gerar o arquivo do roteiro.');
-    }
+    const fileName = `roteiro-${itinerary.nome.toLowerCase().replace(/[^a-z0-9]/g, '-')}.json`;
+    const jsonString = JSON.stringify(itinerary, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success('Roteiro baixado com sucesso!');
   };
 
   if (loading) return <div className="spinner-container"><div className="spinner"></div></div>;
@@ -256,9 +216,7 @@ const handleDelete = async () => {
 
       <h2>Planejamento da Viagem</h2>
       {error && <div className="alert error">{error}</div>}
-      {success && <div className="alert success">{success}</div>}
 
-      {/* Seção de Busca e Seleção */}
       <div className="planning-section">
         <h3>1. Busque e Selecione os Lugares</h3>
         <form onSubmit={handleSearchPlaces} className="search-form">
@@ -276,30 +234,45 @@ const handleDelete = async () => {
         <div className="places-grid">
           {places.map(place => (
             <div 
-              key={place.nome} 
-              className={`place-card ${selectedPlaces.some(p => p.nome === place.nome) ? 'selected' : ''}`}
+              key={place.placeId || place.nome} 
+              className={`place-card ${selectedPlaces.some(p => p.placeId === place.placeId) ? 'selected' : ''}`}
               onClick={() => handlePlaceSelection(place)}
             >
-              <h4>{place.nome}</h4>
-              <p>{place.endereco}</p>
-              {place.dicas && (
-                <div className="place-tips">
-                  <strong>Dicas:</strong>
-                  <ul>{place.dicas.map((tip, i) => <li key={i}>{tip}</li>)}</ul>
+              {place.photoUrl && (
+                <div className="place-image-container">
+                  <img
+                    src={place.photoUrl}
+                    alt={place.nome}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.style.display = 'none';
+                    }}
+                  />
                 </div>
               )}
+              <div className="place-info">
+                <h4>{place.nome}</h4>
+                <p>{place.endereco}</p>
+                {place.rating && <p><strong>Avaliação:</strong> {place.rating}/5</p>}
+                {place.dicas && (
+                  <div className="place-tips">
+                    <strong>Dicas:</strong>
+                    <ul>{place.dicas.map((tip, i) => <li key={i}>{tip}</li>)}</ul>
+                  </div>
+                )}
+              </div>
               <div className="selection-badge">
-                {selectedPlaces.some(p => p.nome === place.nome) ? '✓ Selecionado' : 'Clique para selecionar'}
+                {selectedPlaces.some(p => p.placeId === place.placeId) ? '✓ Selecionado' : 'Clique para selecionar'}
               </div>
             </div>
           ))}
         </div>
 
         {places.length > 0 && places.every(p => p.lat && p.lng) && (
-        <div style={{ marginTop: '2rem' }}>
-          <h3>Visualização no Mapa</h3>
-          <MapWithMarkers places={places} />
-        </div>
+          <div style={{ marginTop: '2rem' }}>
+            <h3>Visualização no Mapa</h3>
+            <MapWithMarkers places={places} />
+          </div>
         )}
 
         {selectedPlaces.length > 0 && (
@@ -307,14 +280,13 @@ const handleDelete = async () => {
             <h4>Lugares selecionados ({selectedPlaces.length}/4):</h4>
             <ul>
               {selectedPlaces.map(place => (
-                <li key={place.nome}>{place.nome}</li>
+                <li key={place.placeId}>{place.nome}</li>
               ))}
             </ul>
           </div>
         )}
       </div>
 
-      {/* Seção de Geração de Roteiro */}
       <div className="planning-section">
         <h3>2. Gere seu Roteiro com IA</h3>
         <button 
@@ -326,7 +298,6 @@ const handleDelete = async () => {
         </button>
       </div>
 
-      {/* Seção de Recomendações */}
       <div className="planning-section">
         <h3>3. Recomendações Extras com IA</h3>
         <form onSubmit={handleGetRecommendations} className="recommendation-form">
@@ -354,19 +325,17 @@ const handleDelete = async () => {
         )}
       </div>
 
-      {/* Seção do Roteiro Gerado */}
       {isAiLoading && itinerary === null && <LoadingSpinner />}
 
-    {itinerary && (
-      <div className="planning-section itinerary-section">
-        <div className="itinerary-header">
-          <h3>{itinerary.nome || "Seu Roteiro"}</h3>
-          <button onClick={handleSaveItinerary} className="save-btn">
-            Salvar Roteiro
-          </button>
-        </div>
+      {itinerary && (
+        <div className="planning-section itinerary-section">
+          <div className="itinerary-header">
+            <h3>{itinerary.nome || "Seu Roteiro"}</h3>
+            <button onClick={handleSaveItinerary} className="save-btn">
+              Salvar Roteiro
+            </button>
+          </div>
 
-        {Array.isArray(itinerary.locais) ? (
           <div className="timeline">
             {itinerary.locais.map((step, index) => (
               <div key={index} className="timeline-item">
@@ -383,20 +352,16 @@ const handleDelete = async () => {
                     )}
                   </div>
                   
-                  {step.dicas && (
+                  {step.dicas && step.dicas.length > 0 && (
                     <div className="step-tips">
                       <h5>Dicas úteis:</h5>
-                      {Array.isArray(step.dicas) ? (
-                        <ul>
-                          {step.dicas.map((tip, i) => (
-                            <li key={i}>
-                              <i className="fas fa-lightbulb"></i> {tip}
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p>{step.dicas}</p>
-                      )}
+                      <ul>
+                        {step.dicas.map((tip, i) => (
+                          <li key={i}>
+                            <i className="fas fa-lightbulb"></i> {tip}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
 
@@ -414,13 +379,8 @@ const handleDelete = async () => {
               </div>
             ))}
           </div>
-        ) : (
-          <div className="itinerary-fallback">
-            <pre>{JSON.stringify(itinerary, null, 2)}</pre>
-          </div>
-        )}
-      </div>
-    )}
+        </div>
+      )}
     </div>
   );
 }
