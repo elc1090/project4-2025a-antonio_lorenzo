@@ -171,7 +171,7 @@ function TripDetailPage() {
       const normalizedItinerary = {
         nome: data.title || "Roteiro Personalizado",
         locais: itineraryData.map((item, index) => ({
-          nome: item.place || item.nome || item.name || `Local ${index + 1}`,
+          nome: item.place || item.nome || item.name || selectedPlaces[index]?.nome || `Local ${index + 1}`,
           tempo: item.duration || item.tempo || item.time || '1-2 horas',
           dicas: item.tips || item.dicas || [],
           travel: item.transport || item.travel || 'Táxi ou transporte público'
