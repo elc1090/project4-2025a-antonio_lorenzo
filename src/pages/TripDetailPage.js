@@ -240,18 +240,20 @@ function TripDetailPage() {
               className={`place-card ${selectedPlaces.some(p => p.placeId === place.placeId) ? 'selected' : ''}`}
               onClick={() => handlePlaceSelection(place)}
             >
-              {place.photoUrl && (
-                <div className="place-image-container">
-                  <img
-                    src={place.photoUrl}
-                    alt={place.nome}
-                    onError={(e) => {
+              {place.imagem && (
+                  <div className="place-image-container">
+                      <img
+                      src={place.imagem}
+                      alt={place.nome}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.parentElement.style.display = 'none';
                     }}
                   />
                 </div>
               )}
+
               <div className="place-info">
                 <h4>{place.nome}</h4>
                 <p>{place.endereco}</p>
