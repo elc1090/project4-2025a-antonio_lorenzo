@@ -103,14 +103,19 @@ function TripDetailPage() {
     setPlaces([]);
     try {
       const { data } = await searchPlaces(searchQuery, trip.destination, true);
+
+      const googleApiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+      if (!googleApiKey) {
+      console.error('Google API Key não encontrada!');
+      }
       
       const placesWithPhotos = data.map(place => ({
         ...place,
-        photoUrl: place.photo 
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+        photoUrl: place.photo && googleApiKey
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${googleApiKey}`
           : null,
-        imagem: place.photo 
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+        imagem: place.photo && googleApiKey
+          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${googleApiKey}`
           : null
       }));
       
