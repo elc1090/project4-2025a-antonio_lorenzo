@@ -77,20 +77,24 @@ function TripDetailPage() {
   };
 
   const handlePlaceSelection = (place) => {
-    setSelectedPlaces(prevSelected => {
-      const isSelected = prevSelected.some(p => p.placeId === place.placeId);
-      if (isSelected) {
-        return prevSelected.filter(p => p.placeId !== place.placeId);
+  setSelectedPlaces(prevSelected => {
+    const isSelected = prevSelected.some(
+      p => (p.placeId || p.nome) === (place.placeId || place.nome)
+    );
+    if (isSelected) {
+      return prevSelected.filter(
+        p => (p.placeId || p.nome) !== (place.placeId || place.nome)
+      );
+    } else {
+      if (prevSelected.length < 4) {
+        return [...prevSelected, place];
       } else {
-        if (prevSelected.length < 4) {
-          return [...prevSelected, place];
-        } else {
-          toast.warn('Você pode selecionar no máximo 4 lugares para gerar o roteiro.');
-          return prevSelected;
-        }
+        toast.warn('Você pode selecionar no máximo 4 lugares para gerar o roteiro.');
+        return prevSelected;
       }
-    });
-  };
+    }
+  });
+};
 
   const handleSearchPlaces = async (e) => {
     e.preventDefault();
@@ -103,15 +107,17 @@ function TripDetailPage() {
     setPlaces([]);
     try {
       const { data } = await searchPlaces(searchQuery, trip.destination, true);
+
+      const googleApiKey = process.env.REACT_APP_GOOGLE_API_KEY;
+      if (!googleApiKey) {
+      console.error('Google API Key não encontrada!');
+      }
       
       const placesWithPhotos = data.map(place => ({
         ...place,
-        photoUrl: place.photo 
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
-          : null,
         imagem: place.photo 
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
-          : null
+        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+        : null
       }));
       
       setPlaces(placesWithPhotos);
@@ -235,21 +241,23 @@ function TripDetailPage() {
           {places.map(place => (
             <div 
               key={place.placeId || place.nome} 
-              className={`place-card ${selectedPlaces.some(p => p.placeId === place.placeId) ? 'selected' : ''}`}
+              className={`place-card ${selectedPlaces.some(p => (p.placeId || p.nome) === (place.placeId || place.nome)) ? 'selected' : ''}`}
               onClick={() => handlePlaceSelection(place)}
             >
-              {place.photoUrl && (
-                <div className="place-image-container">
-                  <img
-                    src={place.photoUrl}
-                    alt={place.nome}
-                    onError={(e) => {
+              {place.imagem && (
+                  <div className="place-image-container">
+                      <img
+                      src={place.imagem}
+                      alt={place.nome}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.parentElement.style.display = 'none';
                     }}
                   />
                 </div>
               )}
+
               <div className="place-info">
                 <h4>{place.nome}</h4>
                 <p>{place.endereco}</p>
@@ -262,7 +270,7 @@ function TripDetailPage() {
                 )}
               </div>
               <div className="selection-badge">
-                {selectedPlaces.some(p => p.placeId === place.placeId) ? '✓ Selecionado' : 'Clique para selecionar'}
+                {selectedPlaces.some(p => (p.placeId || p.nome) === (place.placeId || place.nome)) ? '✓ Selecionado' : 'Clique para selecionar'}
               </div>
             </div>
           ))}
