@@ -100,11 +100,13 @@ router.get('/search', async (req, res) => {
     let results = response.data.results.slice(0, 5).map(place => ({
       nome: place.name,
       endereco: place.formatted_address,
-      localizacao: place.geometry?.location,
+      lat: place.geometry?.location?.lat,
+      lng: place.geometry?.location?.lng,
       rating: place.rating,
       tipos: place.types,
       photo: place.photos?.[0]?.photo_reference
-    }));
+}));
+
 
     // 3. Adicionar dicas de IA se solicitado
     if (getTips === 'true') {
@@ -199,7 +201,7 @@ router.get('/itinerary', async (req, res) => {
       return res.json(placeCache.get(cacheKey));
     }
 
-    const prompt = `Crie um roteiro detalhado para visitar: ${places} em ${timeAvailable} horas.
+    const prompt = `Crie um roteiro detalhado para visitar um desses: ${places} em ${timeAvailable} horas, e após isso outros pontos turísticos da cidade.
     ${preferences ? `Considerando: ${preferences}.` : ''}
     Formato JSON SEM markdown com:
     - ordem de visitação

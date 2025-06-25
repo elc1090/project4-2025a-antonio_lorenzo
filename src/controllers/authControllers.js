@@ -15,7 +15,6 @@ exports.logout = (req, res) => {
 };
 
 
-
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
   try {
