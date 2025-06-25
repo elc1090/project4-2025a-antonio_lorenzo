@@ -173,7 +173,13 @@ function TripDetailPage() {
         locais: itineraryData.map((item, index) => ({
           nome: item.place || item.nome || item.name || selectedPlaces[index]?.nome || `Local ${index + 1}`,
           tempo: item.duration || item.tempo || item.time || '1-2 horas',
-          dicas: item.tips || item.dicas || [],
+          dicas: (() => {
+          const raw = item.dicas ?? item.tips;
+          if (Array.isArray(raw)) return raw;
+          if (typeof raw === 'string') return [raw];
+          if (typeof raw === 'object' && raw !== null) return Object.values(raw).filter(val => typeof val === 'string');
+          return [];
+          })(),
           travel: item.transport || item.travel || 'Táxi ou transporte público'
         }))
       };
@@ -360,18 +366,18 @@ function TripDetailPage() {
                     )}
                   </div>
                   
-                  {step.dicas && step.dicas.length > 0 && (
-                    <div className="step-tips">
-                      <h5>Dicas úteis:</h5>
-                      <ul>
-                        {step.dicas.map((tip, i) => (
-                          <li key={i}>
-                            <i className="fas fa-lightbulb"></i> {tip}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                  {step.dicas && Array.isArray(step.dicas) ? (
+                  <ul>
+                    {step.dicas.map((tip, i) => (
+                      <li key={i}>
+                        <i className="fas fa-lightbulb"></i> {tip}
+                      </li>
+                    ))}
+                  </ul>
+                  ) : step.dicas ? (
+                  <p>{step.dicas}</p> // Caso seja uma string
+                  ) : null}
+
 
                   {step.travel && (
                     <div className="travel-instruction">
