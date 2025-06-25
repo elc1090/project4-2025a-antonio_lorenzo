@@ -111,12 +111,9 @@ function TripDetailPage() {
       
       const placesWithPhotos = data.map(place => ({
         ...place,
-        photoUrl: place.photo && googleApiKey
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${googleApiKey}`
-          : null,
-        imagem: place.photo && googleApiKey
-          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${googleApiKey}`
-          : null
+        imagem: place.photo 
+        ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photo}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+        : null
       }));
       
       setPlaces(placesWithPhotos);
