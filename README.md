@@ -18,7 +18,7 @@
 
  #### Desafios Técnicos:
 
- O deploy individual de cada etapa exigiu bastante esforço, desde a criação do Dockerfile para hospedar o backend até a configuração do Cross-Origin.
+ O principal desafio técnico foi o ajuste fino dos prompts enviados à IA. Garantir que a API do Gemini retornasse respostas em um formato JSON válido e consistente exigiu prompts cuidadosos para instruir o modelo a estruturar os dados de forma precisa, evitando erros que pudessem quebrar a aplicação ao processar as informações.
  
  #### Descrição
 
